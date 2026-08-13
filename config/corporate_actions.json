@@ -1,0 +1,22 @@
+{
+  "0050": [
+    {
+      "type": "split",
+      "effective_date": "2025-06-18",
+      "ratio": 4.0,
+      "source": "TWSE ETF e添富",
+      "source_url": "https://www.twse.com.tw/zh/ETFortune/announcement?company=A00005&date=20250617&fund=0050&seq=1&type=all",
+      "note": "TWSE公告：分割後：分割前 = 4：1，新受益憑證2025-06-18上市。"
+    }
+  ],
+  "0052": [
+    {
+      "type": "split",
+      "effective_date": "2025-11-26",
+      "ratio": 7.0,
+      "source": "TWSE ETF e添富",
+      "source_url": "https://www.twse.com.tw/zh/ETFortune/announcement?company=A00010&date=20251125&fund=0052&seq=1&type=other",
+      "note": "TWSE公告：分割後：分割前 = 7：1，新受益憑證2025-11-26上市。"
+    }
+  ]
+}
