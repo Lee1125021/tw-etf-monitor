@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T19:11:57.204815+08:00",
+  "generated_at": "2026-08-17T13:09:44.957966+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -9,52 +9,8 @@
   "etfs": {
     "0050": {
       "symbol": "0050",
-      "as_of": "2026-08-14",
-      "status": "verified",
-      "official_close": 106.4,
-      "volume_shares": 81955573,
-      "ma60": 103.8175,
-      "ma60_period": {
-        "start": "2026-05-21",
-        "end": "2026-08-14",
-        "sessions": 60
-      },
-      "high52_close": 111.15,
-      "high52_date": "2026-06-22",
-      "high52_window": {
-        "start": "2025-08-15",
-        "end": "2026-08-14"
-      },
-      "drawdown_pct": 4.2735,
-      "thresholds": {
-        "minus_10": 100.035,
-        "minus_15": 94.4775,
-        "minus_20": 88.92
-      },
-      "daily_return_pct": -0.2812,
-      "triggers": {
-        "close_below_ma60": false,
-        "below_ma60_and_drawdown_ge_10": false,
-        "drawdown_ge_15": false,
-        "drawdown_ge_20": false,
-        "daily_return_le_minus_3": false
-      },
-      "validation": {
-        "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=106.7, volume=89418262",
-        "second_source": "Yahoo Finance daily",
-        "second_source_match": true,
-        "second_source_note": "matched",
-        "corporate_action_configured": true,
-        "history_rows": 291,
-        "publishable": true
-      },
-      "formulas": {
-        "ma60": "sum(last 60 completed adjusted closes) / 60",
-        "high52": "max(adjusted close in [as_of-364d, as_of])",
-        "drawdown_pct": "(1 - close / high52) * 100"
-      }
+      "status": "尚無法驗證",
+      "error": "HTTP failure: https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY: HTTPSConnectionPool(host='www.twse.com.tw', port=443): Read timed out. (read timeout=25)"
     },
     "0052": {
       "symbol": "0052",
@@ -90,8 +46,8 @@
       },
       "validation": {
         "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=62.4, volume=20437587",
+        "twse_openapi_same_day_match": true,
+        "twse_openapi_note": "close=61.95, volume=28112743",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched",
@@ -107,5 +63,5 @@
     }
   },
   "official_data_date": "2026-08-14",
-  "is_today_official_data_available": true
+  "is_today_official_data_available": false
 }
