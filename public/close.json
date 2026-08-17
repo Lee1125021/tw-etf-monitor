@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-17T16:31:11.009315+08:00",
+  "generated_at": "2026-08-17T18:06:12.543648+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -14,12 +14,23 @@
       "official_close": 106.45,
       "volume_shares": 58016480,
       "ma60": 103.9942,
-      "ma60_period": {"start": "2026-05-22", "end": "2026-08-17", "sessions": 60},
+      "ma60_period": {
+        "start": "2026-05-22",
+        "end": "2026-08-17",
+        "sessions": 60
+      },
       "high52_close": 111.15,
       "high52_date": "2026-06-22",
-      "high52_window": {"start": "2025-08-18", "end": "2026-08-17"},
+      "high52_window": {
+        "start": "2025-08-18",
+        "end": "2026-08-17"
+      },
       "drawdown_pct": 4.2285,
-      "thresholds": {"minus_10": 100.035, "minus_15": 94.4775, "minus_20": 88.92},
+      "thresholds": {
+        "minus_10": 100.035,
+        "minus_15": 94.4775,
+        "minus_20": 88.92
+      },
       "daily_return_pct": 0.047,
       "triggers": {
         "close_below_ma60": false,
@@ -52,12 +63,23 @@
       "official_close": 61.8,
       "volume_shares": 17886201,
       "ma60": 60.8942,
-      "ma60_period": {"start": "2026-05-22", "end": "2026-08-17", "sessions": 60},
+      "ma60_period": {
+        "start": "2026-05-22",
+        "end": "2026-08-17",
+        "sessions": 60
+      },
       "high52_close": 65.25,
       "high52_date": "2026-06-22",
-      "high52_window": {"start": "2025-08-18", "end": "2026-08-17"},
+      "high52_window": {
+        "start": "2025-08-18",
+        "end": "2026-08-17"
+      },
       "drawdown_pct": 5.2874,
-      "thresholds": {"minus_10": 58.725, "minus_15": 55.4625, "minus_20": 52.2},
+      "thresholds": {
+        "minus_10": 58.725,
+        "minus_15": 55.4625,
+        "minus_20": 52.2
+      },
       "daily_return_pct": -0.2421,
       "triggers": {
         "close_below_ma60": false,
