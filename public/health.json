@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-08-17T18:07:35.020955+08:00",
-  "mode": "close",
+  "generated_at": "2026-08-18T12:56:20.775452+08:00",
+  "mode": "intraday",
   "healthy": true,
   "statuses": {
-    "0050": "verified",
-    "0052": "verified"
+    "0050": "盤中",
+    "0052": "盤中"
   }
 }
