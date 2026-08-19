@@ -1,53 +1,45 @@
 {
-  "generated_at": "2026-08-18T12:56:20.775452+08:00",
+  "generated_at": "2026-08-19T12:55:38.862049+08:00",
   "mode": "intraday",
-  "historical_cutoff": "2026-08-17",
+  "historical_cutoff": "2026-08-18",
   "etfs": {
     "0050": {
-      "status": "盤中",
-      "quote_source": "Yahoo Finance chart snapshot",
-      "quote_time": "2026-08-18T12:56:20.775452+08:00",
-      "price": 105.25,
-      "historical_cutoff": "2026-08-17",
-      "ma60": 103.9942,
-      "high52_close": 111.15,
-      "intraday_drawdown_pct": 5.3081,
-      "thresholds": {
-        "minus_10": 100.035,
-        "minus_15": 94.4775,
-        "minus_20": 88.92
-      },
-      "temporary_triggers": {
-        "price_below_previous_ma60": false,
-        "drawdown_ge_10": false,
-        "drawdown_ge_15": false,
-        "drawdown_ge_20": false
-      },
-      "formal_trigger": false,
-      "note": "盤中資料不得作為正式收盤觸發；正式結果由收盤模式確認。"
+      "status": "尚無法驗證",
+      "historical_validation": {
+        "symbol": "0050",
+        "as_of": "2026-08-18",
+        "status": "尚無法驗證",
+        "validation": {
+          "twse_monthly_history": true,
+          "twse_openapi_same_day_match": true,
+          "twse_openapi_note": "close=104.9, volume=66471402",
+          "second_source": "Yahoo Finance daily",
+          "second_source_match": false,
+          "second_source_note": "Yahoo daily row unavailable",
+          "corporate_action_configured": true,
+          "history_rows": 293,
+          "publishable": false
+        }
+      }
     },
     "0052": {
-      "status": "盤中",
-      "quote_source": "Yahoo Finance chart snapshot",
-      "quote_time": "2026-08-18T12:56:20.775452+08:00",
-      "price": 61.05,
-      "historical_cutoff": "2026-08-17",
-      "ma60": 60.8942,
-      "high52_close": 65.25,
-      "intraday_drawdown_pct": 6.4368,
-      "thresholds": {
-        "minus_10": 58.725,
-        "minus_15": 55.4625,
-        "minus_20": 52.2
-      },
-      "temporary_triggers": {
-        "price_below_previous_ma60": false,
-        "drawdown_ge_10": false,
-        "drawdown_ge_15": false,
-        "drawdown_ge_20": false
-      },
-      "formal_trigger": false,
-      "note": "盤中資料不得作為正式收盤觸發；正式結果由收盤模式確認。"
+      "status": "尚無法驗證",
+      "historical_validation": {
+        "symbol": "0052",
+        "as_of": "2026-08-18",
+        "status": "尚無法驗證",
+        "validation": {
+          "twse_monthly_history": true,
+          "twse_openapi_same_day_match": true,
+          "twse_openapi_note": "close=60.9, volume=15282196",
+          "second_source": "Yahoo Finance daily",
+          "second_source_match": false,
+          "second_source_note": "Yahoo daily row unavailable",
+          "corporate_action_configured": true,
+          "history_rows": 293,
+          "publishable": false
+        }
+      }
     }
   }
 }
