@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-08-19T12:55:38.862049+08:00",
+  "generated_at": "2026-08-20T12:58:31.517405+08:00",
   "mode": "intraday",
-  "historical_cutoff": "2026-08-18",
+  "historical_cutoff": "2026-08-19",
   "etfs": {
     "0050": {
       "status": "尚無法驗證",
       "historical_validation": {
         "symbol": "0050",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "status": "尚無法驗證",
         "validation": {
           "twse_monthly_history": true,
           "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=104.9, volume=66471402",
+          "twse_openapi_note": "close=103.1, volume=100818593",
           "second_source": "Yahoo Finance daily",
           "second_source_match": false,
           "second_source_note": "Yahoo daily row unavailable",
           "corporate_action_configured": true,
-          "history_rows": 293,
+          "history_rows": 294,
           "publishable": false
         }
       }
@@ -26,17 +26,17 @@
       "status": "尚無法驗證",
       "historical_validation": {
         "symbol": "0052",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "status": "尚無法驗證",
         "validation": {
           "twse_monthly_history": true,
           "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=60.9, volume=15282196",
+          "twse_openapi_note": "close=60.15, volume=12817722",
           "second_source": "Yahoo Finance daily",
           "second_source_match": false,
           "second_source_note": "Yahoo daily row unavailable",
           "corporate_action_configured": true,
-          "history_rows": 293,
+          "history_rows": 294,
           "publishable": false
         }
       }
