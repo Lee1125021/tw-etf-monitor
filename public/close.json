@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T18:02:58.204243+08:00",
+  "generated_at": "2026-08-20T20:24:04.795634+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -45,7 +45,7 @@
         "twse_openapi_note": "close=103.1, volume=100818593",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
-        "second_source_note": "matched",
+        "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
         "history_rows": 295,
         "publishable": true
@@ -94,7 +94,7 @@
         "twse_openapi_note": "close=60.15, volume=12817722",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
-        "second_source_note": "matched",
+        "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
         "history_rows": 295,
         "publishable": true
