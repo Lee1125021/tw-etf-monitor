@@ -3,16 +3,16 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import os
 import time
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time as clock_time, timedelta
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-import requests
 from dateutil.relativedelta import relativedelta
 
 TZ = ZoneInfo("Asia/Taipei")
@@ -23,8 +23,14 @@ CONFIG = ROOT / "config" / "corporate_actions.json"
 SYMBOLS = ("0050", "0052")
 TWSE_MONTH = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY"
 TWSE_ALL = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
-YAHOO_CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}.TW"
+TWSE_MIS = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
+YAHOO_CHARTS = (
+    "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}.TW",
+    "https://query2.finance.yahoo.com/v8/finance/chart/{symbol}.TW",
+)
 HEADERS = {"User-Agent": "Mozilla/5.0 tw-etf-monitor/1.0"}
+INTRADAY_START = clock_time(9, 0)
+INTRADAY_END = clock_time(13, 35)
 
 
 class ValidationError(RuntimeError):
@@ -54,9 +60,11 @@ def get_json(url: str, params: dict[str, Any] | None = None, retries: int = 3) -
     last: Exception | None = None
     for i in range(retries):
         try:
-            r = requests.get(url, params=params, headers=HEADERS, timeout=25)
-            r.raise_for_status()
-            return r.json()
+            query = urlencode(params or {})
+            full_url = f"{url}?{query}" if query else url
+            request = Request(full_url, headers=HEADERS)
+            with urlopen(request, timeout=25) as response:
+                return json.loads(response.read().decode("utf-8-sig"))
         except Exception as e:  # pragma: no cover - network retry
             last = e
             time.sleep(1.5 * (i + 1))
@@ -163,15 +171,24 @@ def fetch_twse_all_today(symbol: str) -> dict[str, Any] | None:
     return None
 
 
+def fetch_yahoo_chart(symbol: str, params: dict[str, Any]) -> dict[str, Any]:
+    errors: list[str] = []
+    for template in YAHOO_CHARTS:
+        url = template.format(symbol=symbol)
+        try:
+            payload = get_json(url, params=params, retries=2)
+            result = payload.get("chart", {}).get("result")
+            if result:
+                return result[0]
+            errors.append(f"{url}: empty chart result")
+        except Exception as e:
+            errors.append(f"{url}: {e}")
+    raise ValidationError("Yahoo chart unavailable: " + " | ".join(errors))
+
+
 def fetch_yahoo_daily(symbol: str, start: date, end: date) -> pd.DataFrame:
-    p1 = int(datetime.combine(start, datetime.min.time(), tzinfo=TZ).timestamp())
-    # Yahoo period2 is exclusive; add 2 days to safely include end.
-    p2 = int(datetime.combine(end + timedelta(days=2), datetime.min.time(), tzinfo=TZ).timestamp())
-    payload = get_json(YAHOO_CHART.format(symbol=symbol), params={"period1": p1, "period2": p2, "interval": "1d", "events": "history"})
-    result = payload.get("chart", {}).get("result")
-    if not result:
-        return pd.DataFrame()
-    r = result[0]
+    # A range query is less sensitive to exchange-timezone boundary handling than period1/period2.
+    r = fetch_yahoo_chart(symbol, {"range": "1mo", "interval": "1d", "events": "history"})
     ts = r.get("timestamp", [])
     q = (r.get("indicators", {}).get("quote") or [{}])[0]
     closes = q.get("close", [])
@@ -180,21 +197,112 @@ def fetch_yahoo_daily(symbol: str, start: date, end: date) -> pd.DataFrame:
         if c is None:
             continue
         d = datetime.fromtimestamp(t, TZ).date()
-        rows.append({"date": d, "close": float(c)})
-    return pd.DataFrame(rows)
+        if start <= d <= end:
+            rows.append({"date": d, "close": float(c)})
+    return pd.DataFrame(rows).drop_duplicates("date") if rows else pd.DataFrame()
+
+
+def fetch_yahoo_snapshot(symbol: str) -> dict[str, Any]:
+    r = fetch_yahoo_chart(symbol, {"range": "1d", "interval": "1m", "events": "history"})
+    meta = r.get("meta", {})
+    market_time = meta.get("regularMarketTime")
+    market_price = num(meta.get("regularMarketPrice"))
+
+    if market_time is None or math.isnan(market_price):
+        timestamps = r.get("timestamp", [])
+        quote = (r.get("indicators", {}).get("quote") or [{}])[0]
+        closes = quote.get("close", [])
+        valid = [(int(t), float(c)) for t, c in zip(timestamps, closes) if c is not None]
+        if not valid:
+            raise ValidationError(f"Yahoo snapshot unavailable for {symbol}")
+        market_time, market_price = valid[-1]
+
+    previous_close_value = meta.get("previousClose")
+    if previous_close_value is None:
+        previous_close_value = meta.get("chartPreviousClose")
+    previous_close = num(previous_close_value)
+    return {
+        "price": float(market_price),
+        "timestamp": int(market_time),
+        "date": datetime.fromtimestamp(int(market_time), TZ).date(),
+        "previous_close": None if math.isnan(previous_close) else float(previous_close),
+    }
+
+
+def parse_twse_intraday_payload(payload: dict[str, Any], symbol: str) -> dict[str, Any]:
+    if str(payload.get("rtcode")) != "0000":
+        raise ValidationError(f"TWSE MIS error for {symbol}: {payload.get('rtmessage')}")
+    rows = [r for r in payload.get("msgArray", []) if str(r.get("c", "")) == symbol]
+    if not rows:
+        raise ValidationError(f"TWSE MIS quote unavailable for {symbol}")
+    row = rows[0]
+    price = num(row.get("z"))
+    previous_close = num(row.get("y"))
+    raw_date = str(row.get("d", ""))
+    raw_time = str(row.get("t", ""))
+    if math.isnan(price) or len(raw_date) != 8 or not raw_time:
+        raise ValidationError(f"TWSE MIS quote incomplete for {symbol}")
+    quote_time = datetime.strptime(f"{raw_date} {raw_time}", "%Y%m%d %H:%M:%S").replace(tzinfo=TZ)
+    return {
+        "price": float(price),
+        "previous_close": None if math.isnan(previous_close) else float(previous_close),
+        "date": quote_time.date(),
+        "timestamp": quote_time,
+    }
+
+
+def fetch_twse_intraday_quote(symbol: str) -> dict[str, Any]:
+    payload = get_json(
+        TWSE_MIS,
+        params={"ex_ch": f"tse_{symbol}.tw", "json": "1", "delay": "0"},
+    )
+    return parse_twse_intraday_payload(payload, symbol)
 
 
 def compare_yahoo_close(symbol: str, as_of: date, official_close: float) -> tuple[float | None, bool, str]:
+    daily_error: str | None = None
     try:
         yd = fetch_yahoo_daily(symbol, as_of - timedelta(days=4), as_of)
         hit = yd[yd["date"] == as_of]
-        if hit.empty:
-            return None, False, "Yahoo daily row unavailable"
-        yc = float(hit.iloc[-1]["close"])
-        ok = abs(yc - official_close) <= 0.011
-        return yc, ok, "matched" if ok else f"official={official_close}, yahoo={yc}"
+        if not hit.empty:
+            yc = float(hit.iloc[-1]["close"])
+            ok = abs(yc - official_close) <= 0.011
+            return yc, ok, "matched via Yahoo daily" if ok else "Yahoo daily close mismatch"
+        daily_error = "Yahoo daily row unavailable"
     except Exception as e:
-        return None, False, f"Yahoo validation error: {e}"
+        daily_error = f"Yahoo daily validation error: {e}"
+
+    # Yahoo sometimes exposes a dated market snapshot before the daily candle is available.
+    # The snapshot is used only to validate the official TWSE value, never to publish a price.
+    try:
+        snapshot = fetch_yahoo_snapshot(symbol)
+        candidate: float | None = None
+        label = ""
+        if snapshot["date"] == as_of:
+            candidate = float(snapshot["price"])
+            label = "dated Yahoo snapshot"
+        elif snapshot["date"] > as_of and snapshot.get("previous_close") is not None:
+            candidate = float(snapshot["previous_close"])
+            label = "Yahoo previous close"
+        if candidate is None:
+            return None, False, f"{daily_error}; Yahoo snapshot date mismatch"
+        ok = abs(candidate - official_close) <= 0.011
+        return candidate, ok, f"matched via {label}" if ok else f"{label} mismatch"
+    except Exception as e:
+        return None, False, f"{daily_error}; Yahoo snapshot validation error: {e}"
+
+
+def compare_yahoo_intraday(symbol: str, official: dict[str, Any]) -> tuple[float | None, bool, str, datetime | None]:
+    try:
+        snapshot = fetch_yahoo_snapshot(symbol)
+        snapshot_time = datetime.fromtimestamp(int(snapshot["timestamp"]), TZ)
+        if snapshot["date"] != official["date"]:
+            return None, False, "Yahoo intraday date mismatch", snapshot_time
+        yahoo_price = float(snapshot["price"])
+        ok = abs(yahoo_price - float(official["price"])) <= 0.011
+        return yahoo_price, ok, "matched" if ok else "Yahoo intraday price mismatch", snapshot_time
+    except Exception as e:
+        return None, False, f"Yahoo intraday validation error: {e}", None
 
 
 def calculate(symbol: str, history: pd.DataFrame, actions: dict[str, list[dict[str, Any]]], require_second_source: bool = True) -> Result:
@@ -357,12 +465,13 @@ def run_close(now: datetime) -> dict[str, Any]:
 
 
 def run_intraday(now: datetime) -> dict[str, Any]:
-    # Historical indicators use the latest completed TWSE session only. Intraday quote is Yahoo and is never
-    # inserted into MA60/High52.
+    # Historical indicators use the latest completed TWSE session only. The intraday price is official TWSE
+    # MIS data and is never inserted into MA60/High52. Yahoo is validation-only.
     close_output = run_close(now)
     out: dict[str, Any] = {
         "generated_at": now.isoformat(),
         "mode": "intraday",
+        "source_priority": ["TWSE MIS real-time quote", "Yahoo Finance intraday cross-check"],
         "historical_cutoff": close_output.get("official_data_date"),
         "etfs": {},
     }
@@ -372,30 +481,55 @@ def run_intraday(now: datetime) -> dict[str, Any]:
             out["etfs"][symbol] = {"status": "尚無法驗證", "historical_validation": base}
             continue
         try:
-            yd = fetch_yahoo_daily(symbol, now.date() - timedelta(days=3), now.date())
-            today_row = yd[yd["date"] == now.date()]
-            if today_row.empty:
-                raise ValidationError("No intraday/daily Yahoo quote for today")
-            # Daily endpoint may be delayed; timestamp-free values are labelled as quote snapshot only.
-            price = float(today_row.iloc[-1]["close"])
+            official = fetch_twse_intraday_quote(symbol)
+            if official["date"] != now.date():
+                raise ValidationError("TWSE MIS quote is not from today")
+            yahoo_price, yahoo_ok, yahoo_note, yahoo_time = compare_yahoo_intraday(symbol, official)
+            validation = {
+                "twse_mis_current_date": True,
+                "second_source": "Yahoo Finance intraday",
+                "second_source_match": yahoo_ok,
+                "second_source_note": yahoo_note,
+                "publishable": yahoo_ok,
+            }
+            if not yahoo_ok:
+                out["etfs"][symbol] = {
+                    "status": "尚無法驗證",
+                    "historical": base,
+                    "validation": validation,
+                }
+                continue
+
+            price = float(official["price"])
             high52 = float(base["high52_close"])
             ma60 = float(base["ma60"])
             dd = (1 - price / high52) * 100
+            previous_close = official.get("previous_close")
+            daily_return = None if previous_close is None else (price / float(previous_close) - 1) * 100
             out["etfs"][symbol] = {
                 "status": "盤中",
-                "quote_source": "Yahoo Finance chart snapshot",
-                "quote_time": now.isoformat(),
+                "quote_source": "TWSE MIS real-time quote",
+                "quote_date": official["date"].isoformat(),
+                "quote_time": official["timestamp"].isoformat(),
                 "price": round(price, 4),
+                "previous_close": None if previous_close is None else round(float(previous_close), 4),
+                "daily_return_pct": None if daily_return is None else round(daily_return, 4),
                 "historical_cutoff": base["as_of"],
                 "ma60": ma60,
                 "high52_close": high52,
                 "intraday_drawdown_pct": round(dd, 4),
                 "thresholds": base["thresholds"],
+                "validation": {
+                    **validation,
+                    "second_source_price": None if yahoo_price is None else round(float(yahoo_price), 4),
+                    "second_source_time": None if yahoo_time is None else yahoo_time.isoformat(),
+                },
                 "temporary_triggers": {
                     "price_below_previous_ma60": price < ma60,
                     "drawdown_ge_10": dd >= 10,
                     "drawdown_ge_15": dd >= 15,
                     "drawdown_ge_20": dd >= 20,
+                    "daily_return_le_minus_3": daily_return is not None and daily_return <= -3,
                 },
                 "formal_trigger": False,
                 "note": "盤中資料不得作為正式收盤觸發；正式結果由收盤模式確認。",
@@ -405,28 +539,90 @@ def run_intraday(now: datetime) -> dict[str, Any]:
     return out
 
 
+def payload_ready(mode: str, payload: dict[str, Any], expected_date: date) -> bool:
+    etfs = payload.get("etfs", {})
+    if set(etfs) != set(SYMBOLS):
+        return False
+
+    if mode == "close":
+        if payload.get("mode") != "close" or payload.get("official_data_date") != expected_date.isoformat():
+            return False
+        if payload.get("is_today_official_data_available") is not True:
+            return False
+        for symbol in SYMBOLS:
+            item = etfs[symbol]
+            validation = item.get("validation", {})
+            if item.get("status") != "verified" or item.get("as_of") != expected_date.isoformat():
+                return False
+            if validation.get("second_source_match") is not True or validation.get("publishable") is not True:
+                return False
+        return True
+
+    if payload.get("mode") != "intraday":
+        return False
+    for symbol in SYMBOLS:
+        item = etfs[symbol]
+        validation = item.get("validation", {})
+        if item.get("status") != "盤中" or item.get("quote_date") != expected_date.isoformat():
+            return False
+        if validation.get("second_source_match") is not True or validation.get("publishable") is not True:
+            return False
+    return True
+
+
 def write_outputs(mode: str, payload: dict[str, Any]) -> None:
     PUBLIC.mkdir(parents=True, exist_ok=True)
     target = PUBLIC / ("intraday.json" if mode == "intraday" else "close.json")
     target.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    generated_at = datetime.fromisoformat(str(payload["generated_at"]))
     health = {
         "generated_at": payload.get("generated_at"),
         "mode": mode,
-        "healthy": all(v.get("status") in {"verified", "盤中"} for v in payload.get("etfs", {}).values()),
+        "healthy": payload_ready(mode, payload, generated_at.date()),
         "statuses": {k: v.get("status") for k, v in payload.get("etfs", {}).items()},
     }
     (PUBLIC / "health.json").write_text(json.dumps(health, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def wait_until(not_before: str | None) -> None:
+    if not not_before:
+        return
+    hour, minute = [int(x) for x in not_before.split(":", maxsplit=1)]
+    now = datetime.now(TZ)
+    target = datetime.combine(now.date(), clock_time(hour, minute), tzinfo=TZ)
+    if now < target:
+        time.sleep((target - now).total_seconds())
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=["auto", "close", "intraday"], default="auto")
+    parser.add_argument("--attempts", type=int, default=1)
+    parser.add_argument("--retry-seconds", type=int, default=0)
+    parser.add_argument("--not-before", help="Earliest Asia/Taipei time in HH:MM format")
     args = parser.parse_args()
+    if args.attempts < 1 or args.retry_seconds < 0:
+        parser.error("attempts must be >= 1 and retry-seconds must be >= 0")
+
+    wait_until(args.not_before)
     now = datetime.now(TZ)
     mode = args.mode
     if mode == "auto":
         mode = "intraday" if now.hour < 13 else "close"
-    payload = run_intraday(now) if mode == "intraday" else run_close(now)
+
+    if mode == "intraday" and not (INTRADAY_START <= now.time() <= INTRADAY_END):
+        print(json.dumps({"mode": mode, "skipped": True, "reason": "outside TWSE intraday window"}, ensure_ascii=False))
+        return
+
+    payload: dict[str, Any] = {}
+    for attempt in range(1, args.attempts + 1):
+        now = datetime.now(TZ)
+        payload = run_intraday(now) if mode == "intraday" else run_close(now)
+        if payload_ready(mode, payload, now.date()) or attempt == args.attempts:
+            break
+        if args.retry_seconds:
+            time.sleep(args.retry_seconds)
+
     write_outputs(mode, payload)
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
