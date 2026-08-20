@@ -1,6 +1,14 @@
 name: Update ETF monitor
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'config/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - '.github/workflows/update.yml'
   workflow_dispatch:
     inputs:
       mode:
@@ -13,10 +21,13 @@ on:
           - intraday
           - close
   schedule:
-    # Taiwan time (UTC+8): 10:55, 16:10, 16:22, Monday-Friday.
-    - cron: '55 2 * * 1-5'
-    - cron: '10 8 * * 1-5'
-    - cron: '22 8 * * 1-5'
+    # Run early enough to absorb observed GitHub schedule delays.
+    # Taiwan time (UTC+8): 08:31, 08:47, 14:07, 14:27, Monday-Friday.
+    # Early runs wait until just before the reports before requesting data.
+    - cron: '31 0 * * 1-5'
+    - cron: '47 0 * * 1-5'
+    - cron: '7 6 * * 1-5'
+    - cron: '27 6 * * 1-5'
   push:
     branches: [main]
     paths:
@@ -37,11 +48,23 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout pull request
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Checkout main
+        if: github.event_name != 'pull_request'
+        uses: actions/checkout@v7
+        with:
+          # Scheduled runs can be queued with an older event SHA. Always start from the
+          # latest main branch so a preceding data run cannot cause a non-fast-forward push.
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
           cache: pip
@@ -50,15 +73,21 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run tests
-        run: python -m pytest -q
+        run: python -m unittest discover -s tests -v
 
       - name: Resolve mode
+        if: github.event_name != 'pull_request'
         id: mode
         shell: bash
         run: |
           INPUT_MODE='${{ github.event.inputs.mode }}'
+          EVENT_SCHEDULE='${{ github.event.schedule }}'
           if [ -n "$INPUT_MODE" ] && [ "$INPUT_MODE" != "auto" ]; then
             echo "mode=$INPUT_MODE" >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT_SCHEDULE" = '31 0 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '47 0 * * 1-5' ]; then
+            echo 'mode=intraday' >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT_SCHEDULE" = '7 6 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '27 6 * * 1-5' ]; then
+            echo 'mode=close' >> "$GITHUB_OUTPUT"
           else
             HOUR_TW=$(TZ=Asia/Taipei date +%H)
             if [ "$HOUR_TW" -lt 13 ]; then
@@ -69,9 +98,17 @@ jobs:
           fi
 
       - name: Update verified data
-        run: python src/monitor.py --mode '${{ steps.mode.outputs.mode }}'
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          if [ '${{ steps.mode.outputs.mode }}' = 'intraday' ]; then
+            python src/monitor.py --mode intraday --not-before 10:50 --attempts 4 --retry-seconds 90
+          else
+            python src/monitor.py --mode close --not-before 15:45 --attempts 5 --retry-seconds 180
+          fi
 
       - name: Commit generated data
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
@@ -81,5 +118,6 @@ jobs:
             echo 'No generated changes.'
           else
             git commit -m 'chore: update ETF monitor data'
-            git push
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
