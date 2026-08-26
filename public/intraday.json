@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26T11:47:12.762018+08:00",
+  "generated_at": "2026-08-26T11:54:06.788649+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
@@ -9,7 +9,6 @@
   "etfs": {
     "0050": {
       "status": "尚無法驗證",
-      "error": "could not convert string to float: '-'",
       "historical": {
         "symbol": "0050",
         "as_of": "2026-08-25",
@@ -58,6 +57,13 @@
           "high52": "max(adjusted close in [as_of-364d, as_of])",
           "drawdown_pct": "(1 - close / high52) * 100"
         }
+      },
+      "validation": {
+        "twse_mis_current_date": true,
+        "second_source": "Yahoo Finance intraday",
+        "second_source_match": false,
+        "second_source_note": "Yahoo intraday price mismatch",
+        "publishable": false
       }
     },
     "0052": {
