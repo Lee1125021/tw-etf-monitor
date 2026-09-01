@@ -1,116 +1,26 @@
 {
-  "generated_at": "2026-08-31T11:03:17.246461+08:00",
+  "generated_at": "2026-09-01T10:55:31.807382+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
     "Yahoo Finance intraday cross-check"
   ],
-  "historical_cutoff": "2026-08-28",
+  "historical_cutoff": null,
   "etfs": {
     "0050": {
       "status": "尚無法驗證",
-      "error": "could not convert string to float: '-'",
-      "historical": {
+      "historical_validation": {
         "symbol": "0050",
-        "as_of": "2026-08-28",
-        "status": "verified",
-        "official_close": 106.95,
-        "volume_shares": 78158934,
-        "ma60": 104.2958,
-        "ma60_period": {
-          "start": "2026-06-04",
-          "end": "2026-08-28",
-          "sessions": 60
-        },
-        "high52_close": 111.15,
-        "high52_date": "2026-06-22",
-        "high52_window": {
-          "start": "2025-08-29",
-          "end": "2026-08-28"
-        },
-        "drawdown_pct": 3.7787,
-        "thresholds": {
-          "minus_10": 100.035,
-          "minus_15": 94.4775,
-          "minus_20": 88.92
-        },
-        "daily_return_pct": 0.8487,
-        "triggers": {
-          "close_below_ma60": false,
-          "below_ma60_and_drawdown_ge_10": false,
-          "drawdown_ge_15": false,
-          "drawdown_ge_20": false,
-          "daily_return_le_minus_3": false
-        },
-        "validation": {
-          "twse_monthly_history": true,
-          "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=106.95, volume=78158934",
-          "second_source": "Yahoo Finance daily",
-          "second_source_match": true,
-          "second_source_note": "matched via Yahoo previous close",
-          "corporate_action_configured": true,
-          "history_rows": 301,
-          "publishable": true
-        },
-        "formulas": {
-          "ma60": "sum(last 60 completed adjusted closes) / 60",
-          "high52": "max(adjusted close in [as_of-364d, as_of])",
-          "drawdown_pct": "(1 - close / high52) * 100"
-        }
+        "status": "尚無法驗證",
+        "error": "TWSE STOCK_DAY 0050 2026-09: 很抱歉，沒有符合條件的資料!"
       }
     },
     "0052": {
       "status": "尚無法驗證",
-      "error": "could not convert string to float: '-'",
-      "historical": {
+      "historical_validation": {
         "symbol": "0052",
-        "as_of": "2026-08-28",
-        "status": "verified",
-        "official_close": 62.35,
-        "volume_shares": 15230150,
-        "ma60": 60.9592,
-        "ma60_period": {
-          "start": "2026-06-04",
-          "end": "2026-08-28",
-          "sessions": 60
-        },
-        "high52_close": 65.25,
-        "high52_date": "2026-06-22",
-        "high52_window": {
-          "start": "2025-08-29",
-          "end": "2026-08-28"
-        },
-        "drawdown_pct": 4.4444,
-        "thresholds": {
-          "minus_10": 58.725,
-          "minus_15": 55.4625,
-          "minus_20": 52.2
-        },
-        "daily_return_pct": 0.727,
-        "triggers": {
-          "close_below_ma60": false,
-          "below_ma60_and_drawdown_ge_10": false,
-          "drawdown_ge_15": false,
-          "drawdown_ge_20": false,
-          "daily_return_le_minus_3": false
-        },
-        "validation": {
-          "twse_monthly_history": true,
-          "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=62.35, volume=15230150",
-          "second_source": "Yahoo Finance daily",
-          "second_source_match": true,
-          "second_source_note": "matched via Yahoo previous close",
-          "corporate_action_configured": true,
-          "history_rows": 301,
-          "publishable": true
-        },
-        "formulas": {
-          "ma60": "sum(last 60 completed adjusted closes) / 60",
-          "high52": "max(adjusted close in [as_of-364d, as_of])",
-          "drawdown_pct": "(1 - close / high52) * 100"
-        }
+        "status": "尚無法驗證",
+        "error": "TWSE STOCK_DAY 0052 2026-09: 很抱歉，沒有符合條件的資料!"
       }
     }
   }
