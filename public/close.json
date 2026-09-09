@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-08T15:46:07.248877+08:00",
+  "generated_at": "2026-09-09T15:45:00.000204+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -9,21 +9,21 @@
   "etfs": {
     "0050": {
       "symbol": "0050",
-      "as_of": "2026-09-08",
+      "as_of": "2026-09-09",
       "status": "verified",
       "official_close": 109.65,
-      "volume_shares": 75243156,
-      "ma60": 104.9358,
+      "volume_shares": 46101333,
+      "ma60": 105.0092,
       "ma60_period": {
-        "start": "2026-06-15",
-        "end": "2026-09-08",
+        "start": "2026-06-16",
+        "end": "2026-09-09",
         "sessions": 60
       },
       "high52_close": 111.15,
       "high52_date": "2026-06-22",
       "high52_window": {
-        "start": "2025-09-09",
-        "end": "2026-09-08"
+        "start": "2025-09-10",
+        "end": "2026-09-09"
       },
       "drawdown_pct": 1.3495,
       "thresholds": {
@@ -31,7 +31,7 @@
         "minus_15": 94.4775,
         "minus_20": 88.92
       },
-      "daily_return_pct": -0.2275,
+      "daily_return_pct": 0.0,
       "triggers": {
         "close_below_ma60": false,
         "below_ma60_and_drawdown_ge_10": false,
@@ -42,12 +42,12 @@
       "validation": {
         "twse_monthly_history": true,
         "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=109.9, volume=108677081",
+        "twse_openapi_note": "close=109.65, volume=75243156",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
-        "history_rows": 292,
+        "history_rows": 293,
         "publishable": true
       },
       "formulas": {
@@ -58,29 +58,29 @@
     },
     "0052": {
       "symbol": "0052",
-      "as_of": "2026-09-08",
+      "as_of": "2026-09-09",
       "status": "verified",
-      "official_close": 63.6,
-      "volume_shares": 22549037,
-      "ma60": 61.2975,
+      "official_close": 63.75,
+      "volume_shares": 12013949,
+      "ma60": 61.3333,
       "ma60_period": {
-        "start": "2026-06-15",
-        "end": "2026-09-08",
+        "start": "2026-06-16",
+        "end": "2026-09-09",
         "sessions": 60
       },
       "high52_close": 65.25,
       "high52_date": "2026-06-22",
       "high52_window": {
-        "start": "2025-09-09",
-        "end": "2026-09-08"
+        "start": "2025-09-10",
+        "end": "2026-09-09"
       },
-      "drawdown_pct": 2.5287,
+      "drawdown_pct": 2.2989,
       "thresholds": {
         "minus_10": 58.725,
         "minus_15": 55.4625,
         "minus_20": 52.2
       },
-      "daily_return_pct": -0.2353,
+      "daily_return_pct": 0.2358,
       "triggers": {
         "close_below_ma60": false,
         "below_ma60_and_drawdown_ge_10": false,
@@ -91,12 +91,12 @@
       "validation": {
         "twse_monthly_history": true,
         "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=63.75, volume=22956706",
+        "twse_openapi_note": "close=63.6, volume=22549037",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
-        "history_rows": 287,
+        "history_rows": 288,
         "publishable": true
       },
       "formulas": {
@@ -106,6 +106,6 @@
       }
     }
   },
-  "official_data_date": "2026-09-08",
+  "official_data_date": "2026-09-09",
   "is_today_official_data_available": true
 }
