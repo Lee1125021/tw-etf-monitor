@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T10:56:33.427700+08:00",
+  "generated_at": "2026-09-10T11:05:34.329991+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
@@ -62,6 +62,7 @@
     },
     "0052": {
       "status": "尚無法驗證",
+      "error": "could not convert string to float: '-'",
       "historical": {
         "symbol": "0052",
         "as_of": "2026-09-09",
@@ -110,13 +111,6 @@
           "high52": "max(adjusted close in [as_of-364d, as_of])",
           "drawdown_pct": "(1 - close / high52) * 100"
         }
-      },
-      "validation": {
-        "twse_mis_current_date": true,
-        "second_source": "Yahoo Finance intraday",
-        "second_source_match": false,
-        "second_source_note": "Yahoo intraday price mismatch",
-        "publishable": false
       }
     }
   }
