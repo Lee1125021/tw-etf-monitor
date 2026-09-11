@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T10:56:34.272490+08:00",
+  "generated_at": "2026-09-11T11:04:21.238407+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
@@ -61,57 +61,40 @@
       }
     },
     "0052": {
-      "status": "尚無法驗證",
-      "error": "could not convert string to float: '-'",
-      "historical": {
-        "symbol": "0052",
-        "as_of": "2026-09-10",
-        "status": "verified",
-        "official_close": 63.6,
-        "volume_shares": 8098786,
-        "ma60": 61.3625,
-        "ma60_period": {
-          "start": "2026-06-17",
-          "end": "2026-09-10",
-          "sessions": 60
-        },
-        "high52_close": 65.25,
-        "high52_date": "2026-06-22",
-        "high52_window": {
-          "start": "2025-09-11",
-          "end": "2026-09-10"
-        },
-        "drawdown_pct": 2.5287,
-        "thresholds": {
-          "minus_10": 58.725,
-          "minus_15": 55.4625,
-          "minus_20": 52.2
-        },
-        "daily_return_pct": -0.2353,
-        "triggers": {
-          "close_below_ma60": false,
-          "below_ma60_and_drawdown_ge_10": false,
-          "drawdown_ge_15": false,
-          "drawdown_ge_20": false,
-          "daily_return_le_minus_3": false
-        },
-        "validation": {
-          "twse_monthly_history": true,
-          "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=63.6, volume=8098786",
-          "second_source": "Yahoo Finance daily",
-          "second_source_match": true,
-          "second_source_note": "matched via Yahoo previous close",
-          "corporate_action_configured": true,
-          "history_rows": 289,
-          "publishable": true
-        },
-        "formulas": {
-          "ma60": "sum(last 60 completed adjusted closes) / 60",
-          "high52": "max(adjusted close in [as_of-364d, as_of])",
-          "drawdown_pct": "(1 - close / high52) * 100"
-        }
-      }
+      "status": "盤中",
+      "quote_source": "TWSE MIS real-time quote",
+      "quote_date": "2026-09-11",
+      "quote_time": "2026-09-11T11:04:49+08:00",
+      "price": 62.4,
+      "previous_close": 63.6,
+      "daily_return_pct": -1.8868,
+      "historical_cutoff": "2026-09-10",
+      "ma60": 61.3625,
+      "high52_close": 65.25,
+      "intraday_drawdown_pct": 4.3678,
+      "thresholds": {
+        "minus_10": 58.725,
+        "minus_15": 55.4625,
+        "minus_20": 52.2
+      },
+      "validation": {
+        "twse_mis_current_date": true,
+        "second_source": "Yahoo Finance intraday",
+        "second_source_match": true,
+        "second_source_note": "matched",
+        "publishable": true,
+        "second_source_price": 62.4,
+        "second_source_time": "2026-09-11T10:45:13+08:00"
+      },
+      "temporary_triggers": {
+        "price_below_previous_ma60": false,
+        "drawdown_ge_10": false,
+        "drawdown_ge_15": false,
+        "drawdown_ge_20": false,
+        "daily_return_le_minus_3": false
+      },
+      "formal_trigger": false,
+      "note": "盤中資料不得作為正式收盤觸發；正式結果由收盤模式確認。"
     }
   }
 }
