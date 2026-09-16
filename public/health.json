@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-16T19:38:35.135583+08:00",
+  "generated_at": "2026-09-16T19:49:38.426467+08:00",
   "mode": "close",
-  "healthy": false,
+  "healthy": true,
   "statuses": {
-    "0050": "尚無法驗證",
-    "0052": "尚無法驗證"
+    "0050": "verified",
+    "0052": "verified"
   }
 }
