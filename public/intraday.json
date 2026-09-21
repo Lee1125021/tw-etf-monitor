@@ -1,40 +1,40 @@
 {
-  "generated_at": "2026-09-18T13:23:01.455193+08:00",
+  "generated_at": "2026-09-21T13:21:48.190798+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
     "Yahoo Finance intraday cross-check"
   ],
-  "historical_cutoff": "2026-09-17",
+  "historical_cutoff": "2026-09-18",
   "etfs": {
     "0050": {
       "status": "尚無法驗證",
       "error": "could not convert string to float: '-'",
       "historical": {
         "symbol": "0050",
-        "as_of": "2026-09-17",
+        "as_of": "2026-09-18",
         "status": "verified",
-        "official_close": 108.05,
-        "volume_shares": 49931752,
-        "ma60": 104.965,
+        "official_close": 109.85,
+        "volume_shares": 86731065,
+        "ma60": 105.0092,
         "ma60_period": {
-          "start": "2026-06-25",
-          "end": "2026-09-17",
+          "start": "2026-06-26",
+          "end": "2026-09-18",
           "sessions": 60
         },
         "high52_close": 111.15,
         "high52_date": "2026-06-22",
         "high52_window": {
-          "start": "2025-09-18",
-          "end": "2026-09-17"
+          "start": "2025-09-19",
+          "end": "2026-09-18"
         },
-        "drawdown_pct": 2.789,
+        "drawdown_pct": 1.1696,
         "thresholds": {
           "minus_10": 100.035,
           "minus_15": 94.4775,
           "minus_20": 88.92
         },
-        "daily_return_pct": 1.0758,
+        "daily_return_pct": 1.6659,
         "triggers": {
           "close_below_ma60": false,
           "below_ma60_and_drawdown_ge_10": false,
@@ -45,12 +45,12 @@
         "validation": {
           "twse_monthly_history": true,
           "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=108.05, volume=49931752",
+          "twse_openapi_note": "close=109.85, volume=86731065",
           "second_source": "Yahoo Finance daily",
           "second_source_match": true,
-          "second_source_note": "matched via Yahoo previous close",
+          "second_source_note": "matched via Yahoo daily",
           "corporate_action_configured": true,
-          "history_rows": 299,
+          "history_rows": 300,
           "publishable": true
         },
         "formulas": {
@@ -65,29 +65,29 @@
       "error": "could not convert string to float: '-'",
       "historical": {
         "symbol": "0052",
-        "as_of": "2026-09-17",
+        "as_of": "2026-09-18",
         "status": "verified",
-        "official_close": 62.7,
-        "volume_shares": 11729608,
-        "ma60": 61.2433,
+        "official_close": 63.8,
+        "volume_shares": 16624775,
+        "ma60": 61.2567,
         "ma60_period": {
-          "start": "2026-06-25",
-          "end": "2026-09-17",
+          "start": "2026-06-26",
+          "end": "2026-09-18",
           "sessions": 60
         },
         "high52_close": 65.25,
         "high52_date": "2026-06-22",
         "high52_window": {
-          "start": "2025-09-18",
-          "end": "2026-09-17"
+          "start": "2025-09-19",
+          "end": "2026-09-18"
         },
-        "drawdown_pct": 3.908,
+        "drawdown_pct": 2.2222,
         "thresholds": {
           "minus_10": 58.725,
           "minus_15": 55.4625,
           "minus_20": 52.2
         },
-        "daily_return_pct": 1.2107,
+        "daily_return_pct": 1.7544,
         "triggers": {
           "close_below_ma60": false,
           "below_ma60_and_drawdown_ge_10": false,
@@ -98,12 +98,12 @@
         "validation": {
           "twse_monthly_history": true,
           "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=62.7, volume=11729608",
+          "twse_openapi_note": "close=63.8, volume=16624775",
           "second_source": "Yahoo Finance daily",
           "second_source_match": true,
-          "second_source_note": "matched via Yahoo previous close",
+          "second_source_note": "matched via Yahoo daily",
           "corporate_action_configured": true,
-          "history_rows": 294,
+          "history_rows": 295,
           "publishable": true
         },
         "formulas": {
