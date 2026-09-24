@@ -1,39 +1,40 @@
 {
-  "generated_at": "2026-09-23T13:21:44.477988+08:00",
+  "generated_at": "2026-09-24T13:16:14.439389+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
     "Yahoo Finance intraday cross-check"
   ],
-  "historical_cutoff": "2026-09-22",
+  "historical_cutoff": "2026-09-23",
   "etfs": {
     "0050": {
       "status": "尚無法驗證",
+      "error": "HTTP failure: https://mis.twse.com.tw/stock/api/getStockInfo.jsp: HTTP Error 502: Bad Gateway",
       "historical": {
         "symbol": "0050",
-        "as_of": "2026-09-22",
+        "as_of": "2026-09-23",
         "status": "verified",
-        "official_close": 111.85,
-        "volume_shares": 84309564,
-        "ma60": 105.27,
+        "official_close": 112.45,
+        "volume_shares": 58059253,
+        "ma60": 105.3475,
         "ma60_period": {
-          "start": "2026-06-30",
-          "end": "2026-09-22",
+          "start": "2026-07-01",
+          "end": "2026-09-23",
           "sessions": 60
         },
-        "high52_close": 111.85,
-        "high52_date": "2026-09-22",
+        "high52_close": 112.45,
+        "high52_date": "2026-09-23",
         "high52_window": {
-          "start": "2025-09-23",
-          "end": "2026-09-22"
+          "start": "2025-09-24",
+          "end": "2026-09-23"
         },
         "drawdown_pct": 0.0,
         "thresholds": {
-          "minus_10": 100.665,
-          "minus_15": 95.0725,
-          "minus_20": 89.48
+          "minus_10": 101.205,
+          "minus_15": 95.5825,
+          "minus_20": 89.96
         },
-        "daily_return_pct": 0.449,
+        "daily_return_pct": 0.5364,
         "triggers": {
           "close_below_ma60": false,
           "below_ma60_and_drawdown_ge_10": false,
@@ -43,13 +44,13 @@
         },
         "validation": {
           "twse_monthly_history": true,
-          "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=111.85, volume=84309564",
+          "twse_openapi_same_day_match": false,
+          "twse_openapi_note": "error: HTTP failure: https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL: Expecting value: line 1 column 1 (char 0)",
           "second_source": "Yahoo Finance daily",
           "second_source_match": true,
           "second_source_note": "matched via Yahoo previous close",
           "corporate_action_configured": true,
-          "history_rows": 302,
+          "history_rows": 303,
           "publishable": true
         },
         "formulas": {
@@ -57,66 +58,14 @@
           "high52": "max(adjusted close in [as_of-364d, as_of])",
           "drawdown_pct": "(1 - close / high52) * 100"
         }
-      },
-      "validation": {
-        "twse_mis_current_date": true,
-        "second_source": "Yahoo Finance intraday",
-        "second_source_match": false,
-        "second_source_note": "Yahoo intraday price mismatch",
-        "publishable": false
       }
     },
     "0052": {
       "status": "尚無法驗證",
-      "error": "could not convert string to float: '-'",
-      "historical": {
+      "historical_validation": {
         "symbol": "0052",
-        "as_of": "2026-09-22",
-        "status": "verified",
-        "official_close": 64.75,
-        "volume_shares": 16648532,
-        "ma60": 61.3792,
-        "ma60_period": {
-          "start": "2026-06-30",
-          "end": "2026-09-22",
-          "sessions": 60
-        },
-        "high52_close": 65.25,
-        "high52_date": "2026-06-22",
-        "high52_window": {
-          "start": "2025-09-23",
-          "end": "2026-09-22"
-        },
-        "drawdown_pct": 0.7663,
-        "thresholds": {
-          "minus_10": 58.725,
-          "minus_15": 55.4625,
-          "minus_20": 52.2
-        },
-        "daily_return_pct": 0.3098,
-        "triggers": {
-          "close_below_ma60": false,
-          "below_ma60_and_drawdown_ge_10": false,
-          "drawdown_ge_15": false,
-          "drawdown_ge_20": false,
-          "daily_return_le_minus_3": false
-        },
-        "validation": {
-          "twse_monthly_history": true,
-          "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=64.75, volume=16648532",
-          "second_source": "Yahoo Finance daily",
-          "second_source_match": true,
-          "second_source_note": "matched via Yahoo previous close",
-          "corporate_action_configured": true,
-          "history_rows": 297,
-          "publishable": true
-        },
-        "formulas": {
-          "ma60": "sum(last 60 completed adjusted closes) / 60",
-          "high52": "max(adjusted close in [as_of-364d, as_of])",
-          "drawdown_pct": "(1 - close / high52) * 100"
-        }
+        "status": "尚無法驗證",
+        "error": "HTTP failure: https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY: HTTP Error 307: Temporary Redirect"
       }
     }
   }
