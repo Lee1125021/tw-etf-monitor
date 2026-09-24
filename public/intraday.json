@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-24T13:16:14.439389+08:00",
+  "generated_at": "2026-09-24T13:37:46.151869+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
@@ -8,65 +8,76 @@
   "historical_cutoff": "2026-09-23",
   "etfs": {
     "0050": {
-      "status": "尚無法驗證",
-      "error": "HTTP failure: https://mis.twse.com.tw/stock/api/getStockInfo.jsp: HTTP Error 502: Bad Gateway",
-      "historical": {
-        "symbol": "0050",
-        "as_of": "2026-09-23",
-        "status": "verified",
-        "official_close": 112.45,
-        "volume_shares": 58059253,
-        "ma60": 105.3475,
-        "ma60_period": {
-          "start": "2026-07-01",
-          "end": "2026-09-23",
-          "sessions": 60
-        },
-        "high52_close": 112.45,
-        "high52_date": "2026-09-23",
-        "high52_window": {
-          "start": "2025-09-24",
-          "end": "2026-09-23"
-        },
-        "drawdown_pct": 0.0,
-        "thresholds": {
-          "minus_10": 101.205,
-          "minus_15": 95.5825,
-          "minus_20": 89.96
-        },
-        "daily_return_pct": 0.5364,
-        "triggers": {
-          "close_below_ma60": false,
-          "below_ma60_and_drawdown_ge_10": false,
-          "drawdown_ge_15": false,
-          "drawdown_ge_20": false,
-          "daily_return_le_minus_3": false
-        },
-        "validation": {
-          "twse_monthly_history": true,
-          "twse_openapi_same_day_match": false,
-          "twse_openapi_note": "error: HTTP failure: https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL: Expecting value: line 1 column 1 (char 0)",
-          "second_source": "Yahoo Finance daily",
-          "second_source_match": true,
-          "second_source_note": "matched via Yahoo previous close",
-          "corporate_action_configured": true,
-          "history_rows": 303,
-          "publishable": true
-        },
-        "formulas": {
-          "ma60": "sum(last 60 completed adjusted closes) / 60",
-          "high52": "max(adjusted close in [as_of-364d, as_of])",
-          "drawdown_pct": "(1 - close / high52) * 100"
-        }
-      }
+      "status": "盤中",
+      "quote_source": "TWSE MIS real-time quote",
+      "quote_date": "2026-09-24",
+      "quote_time": "2026-09-24T13:30:00+08:00",
+      "price": 112.4,
+      "previous_close": 112.45,
+      "daily_return_pct": -0.0445,
+      "historical_cutoff": "2026-09-23",
+      "ma60": 105.3475,
+      "high52_close": 112.45,
+      "intraday_drawdown_pct": 0.0445,
+      "thresholds": {
+        "minus_10": 101.205,
+        "minus_15": 95.5825,
+        "minus_20": 89.96
+      },
+      "validation": {
+        "twse_mis_current_date": true,
+        "second_source": "Yahoo Finance intraday",
+        "second_source_match": true,
+        "second_source_note": "matched",
+        "publishable": true,
+        "second_source_price": 112.4,
+        "second_source_time": "2026-09-24T13:18:40+08:00"
+      },
+      "temporary_triggers": {
+        "price_below_previous_ma60": false,
+        "drawdown_ge_10": false,
+        "drawdown_ge_15": false,
+        "drawdown_ge_20": false,
+        "daily_return_le_minus_3": false
+      },
+      "formal_trigger": false,
+      "note": "盤中資料不得作為正式收盤觸發；正式結果由收盤模式確認。"
     },
     "0052": {
-      "status": "尚無法驗證",
-      "historical_validation": {
-        "symbol": "0052",
-        "status": "尚無法驗證",
-        "error": "HTTP failure: https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY: HTTP Error 307: Temporary Redirect"
-      }
+      "status": "盤中",
+      "quote_source": "TWSE MIS real-time quote",
+      "quote_date": "2026-09-24",
+      "quote_time": "2026-09-24T13:30:00+08:00",
+      "price": 65.4,
+      "previous_close": 65.45,
+      "daily_return_pct": -0.0764,
+      "historical_cutoff": "2026-09-23",
+      "ma60": 61.4142,
+      "high52_close": 65.45,
+      "intraday_drawdown_pct": 0.0764,
+      "thresholds": {
+        "minus_10": 58.905,
+        "minus_15": 55.6325,
+        "minus_20": 52.36
+      },
+      "validation": {
+        "twse_mis_current_date": true,
+        "second_source": "Yahoo Finance intraday",
+        "second_source_match": true,
+        "second_source_note": "matched",
+        "publishable": true,
+        "second_source_price": 65.4,
+        "second_source_time": "2026-09-24T13:18:39+08:00"
+      },
+      "temporary_triggers": {
+        "price_below_previous_ma60": false,
+        "drawdown_ge_10": false,
+        "drawdown_ge_15": false,
+        "drawdown_ge_20": false,
+        "daily_return_le_minus_3": false
+      },
+      "formal_trigger": false,
+      "note": "盤中資料不得作為正式收盤觸發；正式結果由收盤模式確認。"
     }
   }
 }
