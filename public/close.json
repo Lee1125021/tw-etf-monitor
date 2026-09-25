@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-24T19:59:11.136320+08:00",
+  "generated_at": "2026-09-25T19:58:04.531948+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -41,11 +41,11 @@
       },
       "validation": {
         "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=112.45, volume=58059253",
+        "twse_openapi_same_day_match": true,
+        "twse_openapi_note": "close=112.4, volume=70487939",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
-        "second_source_note": "matched via Yahoo daily",
+        "second_source_note": "matched via dated Yahoo snapshot",
         "corporate_action_configured": true,
         "history_rows": 304,
         "publishable": true
@@ -90,11 +90,11 @@
       },
       "validation": {
         "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=65.45, volume=13691258",
+        "twse_openapi_same_day_match": true,
+        "twse_openapi_note": "close=65.4, volume=10067500",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
-        "second_source_note": "matched via Yahoo daily",
+        "second_source_note": "matched via dated Yahoo snapshot",
         "corporate_action_configured": true,
         "history_rows": 299,
         "publishable": true
@@ -107,5 +107,5 @@
     }
   },
   "official_data_date": "2026-09-24",
-  "is_today_official_data_available": true
+  "is_today_official_data_available": false
 }
