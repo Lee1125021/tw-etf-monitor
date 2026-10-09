@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-08T21:44:09.939635+08:00",
+  "generated_at": "2026-10-09T21:22:17.476190+08:00",
   "mode": "close",
-  "healthy": true,
+  "healthy": false,
   "statuses": {
     "0050": "verified",
     "0052": "verified"
