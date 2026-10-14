@@ -1,40 +1,40 @@
 {
-  "generated_at": "2026-09-25T13:33:17.948020+08:00",
+  "generated_at": "2026-10-14T13:18:30.917001+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
     "Yahoo Finance intraday cross-check"
   ],
-  "historical_cutoff": "2026-09-24",
+  "historical_cutoff": "2026-10-13",
   "etfs": {
     "0050": {
       "status": "尚無法驗證",
-      "error": "TWSE MIS quote is not from today",
+      "error": "could not convert string to float: '-'",
       "historical": {
         "symbol": "0050",
-        "as_of": "2026-09-24",
+        "as_of": "2026-10-13",
         "status": "verified",
         "official_close": 112.4,
-        "volume_shares": 70487939,
-        "ma60": 105.3983,
+        "volume_shares": 242070746,
+        "ma60": 106.6175,
         "ma60_period": {
-          "start": "2026-07-02",
-          "end": "2026-09-24",
+          "start": "2026-07-17",
+          "end": "2026-10-13",
           "sessions": 60
         },
-        "high52_close": 112.45,
-        "high52_date": "2026-09-23",
+        "high52_close": 116.5,
+        "high52_date": "2026-10-06",
         "high52_window": {
-          "start": "2025-09-25",
-          "end": "2026-09-24"
+          "start": "2025-10-14",
+          "end": "2026-10-13"
         },
-        "drawdown_pct": 0.0445,
+        "drawdown_pct": 3.5193,
         "thresholds": {
-          "minus_10": 101.205,
-          "minus_15": 95.5825,
-          "minus_20": 89.96
+          "minus_10": 104.85,
+          "minus_15": 99.025,
+          "minus_20": 93.2
         },
-        "daily_return_pct": -0.0445,
+        "daily_return_pct": -2.0906,
         "triggers": {
           "close_below_ma60": false,
           "below_ma60_and_drawdown_ge_10": false,
@@ -45,12 +45,12 @@
         "validation": {
           "twse_monthly_history": true,
           "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=112.4, volume=70487939",
+          "twse_openapi_note": "close=112.4, volume=242070746",
           "second_source": "Yahoo Finance daily",
           "second_source_match": true,
-          "second_source_note": "matched via dated Yahoo snapshot",
+          "second_source_note": "matched via Yahoo previous close",
           "corporate_action_configured": true,
-          "history_rows": 304,
+          "history_rows": 291,
           "publishable": true
         },
         "formulas": {
@@ -62,32 +62,32 @@
     },
     "0052": {
       "status": "尚無法驗證",
-      "error": "TWSE MIS quote is not from today",
+      "error": "could not convert string to float: '-'",
       "historical": {
         "symbol": "0052",
-        "as_of": "2026-09-24",
+        "as_of": "2026-10-13",
         "status": "verified",
         "official_close": 65.4,
-        "volume_shares": 10067500,
-        "ma60": 61.4308,
+        "volume_shares": 34441112,
+        "ma60": 62.09,
         "ma60_period": {
-          "start": "2026-07-02",
-          "end": "2026-09-24",
+          "start": "2026-07-17",
+          "end": "2026-10-13",
           "sessions": 60
         },
-        "high52_close": 65.45,
-        "high52_date": "2026-09-23",
+        "high52_close": 67.95,
+        "high52_date": "2026-10-06",
         "high52_window": {
-          "start": "2025-09-25",
-          "end": "2026-09-24"
+          "start": "2025-10-14",
+          "end": "2026-10-13"
         },
-        "drawdown_pct": 0.0764,
+        "drawdown_pct": 3.7528,
         "thresholds": {
-          "minus_10": 58.905,
-          "minus_15": 55.6325,
-          "minus_20": 52.36
+          "minus_10": 61.155,
+          "minus_15": 57.7575,
+          "minus_20": 54.36
         },
-        "daily_return_pct": -0.0764,
+        "daily_return_pct": -2.0958,
         "triggers": {
           "close_below_ma60": false,
           "below_ma60_and_drawdown_ge_10": false,
@@ -98,12 +98,12 @@
         "validation": {
           "twse_monthly_history": true,
           "twse_openapi_same_day_match": true,
-          "twse_openapi_note": "close=65.4, volume=10067500",
+          "twse_openapi_note": "close=65.4, volume=34441112",
           "second_source": "Yahoo Finance daily",
           "second_source_match": true,
-          "second_source_note": "matched via dated Yahoo snapshot",
+          "second_source_note": "matched via Yahoo previous close",
           "corporate_action_configured": true,
-          "history_rows": 299,
+          "history_rows": 286,
           "publishable": true
         },
         "formulas": {
