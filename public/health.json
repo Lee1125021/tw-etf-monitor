@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-16T19:38:20.936079+08:00",
-  "mode": "close",
-  "healthy": true,
+  "generated_at": "2026-10-19T13:09:27.609390+08:00",
+  "mode": "intraday",
+  "healthy": false,
   "statuses": {
-    "0050": "verified",
-    "0052": "verified"
+    "0050": "尚無法驗證",
+    "0052": "尚無法驗證"
   }
 }
