@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T20:06:55.585353+08:00",
+  "generated_at": "2026-10-23T19:44:18.733701+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -41,8 +41,8 @@
       },
       "validation": {
         "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=108.15, volume=83301839",
+        "twse_openapi_same_day_match": true,
+        "twse_openapi_note": "close=106.9, volume=132441805",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
@@ -90,8 +90,8 @@
       },
       "validation": {
         "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=62.9, volume=11775612",
+        "twse_openapi_same_day_match": true,
+        "twse_openapi_note": "close=61.8, volume=20251363",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
@@ -107,5 +107,5 @@
     }
   },
   "official_data_date": "2026-10-22",
-  "is_today_official_data_available": true
+  "is_today_official_data_available": false
 }
