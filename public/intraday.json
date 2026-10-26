@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T13:32:07.233669+08:00",
+  "generated_at": "2026-10-26T13:13:31.603026+08:00",
   "mode": "intraday",
   "source_priority": [
     "TWSE MIS real-time quote",
@@ -48,7 +48,7 @@
           "twse_openapi_note": "close=106.9, volume=132441805",
           "second_source": "Yahoo Finance daily",
           "second_source_match": true,
-          "second_source_note": "matched via dated Yahoo snapshot",
+          "second_source_note": "matched via Yahoo daily",
           "corporate_action_configured": true,
           "history_rows": 298,
           "publishable": true
@@ -101,7 +101,7 @@
           "twse_openapi_note": "close=61.8, volume=20251363",
           "second_source": "Yahoo Finance daily",
           "second_source_match": true,
-          "second_source_note": "matched via dated Yahoo snapshot",
+          "second_source_note": "matched via Yahoo daily",
           "corporate_action_configured": true,
           "history_rows": 293,
           "publishable": true
