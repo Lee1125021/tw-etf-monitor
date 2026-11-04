@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T22:28:35.463620+08:00",
+  "generated_at": "2026-11-04T22:22:43.147968+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -9,45 +9,45 @@
   "etfs": {
     "0050": {
       "symbol": "0050",
-      "as_of": "2026-11-03",
+      "as_of": "2026-11-04",
       "status": "verified",
-      "official_close": 100.6,
-      "volume_shares": 302407473,
-      "ma60": 108.1325,
+      "official_close": 99.85,
+      "volume_shares": 447215925,
+      "ma60": 108.0667,
       "ma60_period": {
-        "start": "2026-08-05",
-        "end": "2026-11-03",
+        "start": "2026-08-06",
+        "end": "2026-11-04",
         "sessions": 60
       },
       "high52_close": 116.5,
       "high52_date": "2026-10-06",
       "high52_window": {
-        "start": "2025-11-04",
-        "end": "2026-11-03"
+        "start": "2025-11-05",
+        "end": "2026-11-04"
       },
-      "drawdown_pct": 13.6481,
+      "drawdown_pct": 14.2918,
       "thresholds": {
         "minus_10": 104.85,
         "minus_15": 99.025,
         "minus_20": 93.2
       },
-      "daily_return_pct": -3.3622,
+      "daily_return_pct": -0.7455,
       "triggers": {
         "close_below_ma60": true,
         "below_ma60_and_drawdown_ge_10": true,
         "drawdown_ge_15": false,
         "drawdown_ge_20": false,
-        "daily_return_le_minus_3": true
+        "daily_return_le_minus_3": false
       },
       "validation": {
         "twse_monthly_history": true,
         "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=104.1, volume=160932537",
+        "twse_openapi_note": "error: HTTP failure: https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL: Expecting value: line 1 column 1 (char 0)",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
-        "history_rows": 283,
+        "history_rows": 284,
         "publishable": true
       },
       "formulas": {
@@ -58,45 +58,45 @@
     },
     "0052": {
       "symbol": "0052",
-      "as_of": "2026-11-03",
+      "as_of": "2026-11-04",
       "status": "verified",
-      "official_close": 58.1,
-      "volume_shares": 33154489,
-      "ma60": 62.9067,
+      "official_close": 57.75,
+      "volume_shares": 31441033,
+      "ma60": 62.8583,
       "ma60_period": {
-        "start": "2026-08-05",
-        "end": "2026-11-03",
+        "start": "2026-08-06",
+        "end": "2026-11-04",
         "sessions": 60
       },
       "high52_close": 67.95,
       "high52_date": "2026-10-06",
       "high52_window": {
-        "start": "2025-11-04",
-        "end": "2026-11-03"
+        "start": "2025-11-05",
+        "end": "2026-11-04"
       },
-      "drawdown_pct": 14.496,
+      "drawdown_pct": 15.011,
       "thresholds": {
         "minus_10": 61.155,
         "minus_15": 57.7575,
         "minus_20": 54.36
       },
-      "daily_return_pct": -3.6484,
+      "daily_return_pct": -0.6024,
       "triggers": {
         "close_below_ma60": true,
         "below_ma60_and_drawdown_ge_10": true,
-        "drawdown_ge_15": false,
+        "drawdown_ge_15": true,
         "drawdown_ge_20": false,
-        "daily_return_le_minus_3": true
+        "daily_return_le_minus_3": false
       },
       "validation": {
         "twse_monthly_history": true,
         "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=60.3, volume=21851557",
+        "twse_openapi_note": "error: HTTP failure: https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL: Expecting value: line 1 column 1 (char 0)",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
-        "history_rows": 278,
+        "history_rows": 279,
         "publishable": true
       },
       "formulas": {
@@ -106,6 +106,6 @@
       }
     }
   },
-  "official_data_date": "2026-11-03",
+  "official_data_date": "2026-11-04",
   "is_today_official_data_available": true
 }
