@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-04T22:22:43.147968+08:00",
+  "generated_at": "2026-11-04T22:43:24.716771+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
@@ -42,7 +42,7 @@
       "validation": {
         "twse_monthly_history": true,
         "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "error: HTTP failure: https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL: Expecting value: line 1 column 1 (char 0)",
+        "twse_openapi_note": "close=100.6, volume=302407473",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
@@ -91,7 +91,7 @@
       "validation": {
         "twse_monthly_history": true,
         "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "error: HTTP failure: https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL: Expecting value: line 1 column 1 (char 0)",
+        "twse_openapi_note": "close=58.1, volume=33154489",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
