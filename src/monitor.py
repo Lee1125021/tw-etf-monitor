@@ -22,6 +22,7 @@ DATA = ROOT / "data"
 CONFIG = ROOT / "config" / "corporate_actions.json"
 SYMBOLS = ("0050", "0052")
 TWSE_MONTH = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY"
+TWSE_CALENDAR = "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK"
 TWSE_ALL = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_MIS = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
 YAHOO_CHARTS = (
@@ -131,6 +132,21 @@ def fetch_twse_month(symbol: str, month: date) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def trading_sessions(start: date, end: date) -> set[date]:
+    sessions = set()
+    month = start.replace(day=1)
+    while month <= end:
+        payload = get_json(TWSE_CALENDAR, {"date": month.strftime("%Y%m01"), "response": "json"})
+        if payload.get("stat") != "OK" or not payload.get("data"):
+            raise ValidationError(f"TWSE trading calendar unavailable: {month}")
+        for row in payload["data"]:
+            day = parse_twse_date(row[0])
+            if start <= day <= end:
+                sessions.add(day)
+        month += relativedelta(months=1)
+    return sessions
+
+
 def fetch_history(symbol: str, end: date, months: int = 15) -> pd.DataFrame:
     start_month = (end.replace(day=1) - relativedelta(months=months - 1))
     frames = []
@@ -148,6 +164,10 @@ def fetch_history(symbol: str, end: date, months: int = 15) -> pd.DataFrame:
         raise ValidationError(f"Incomplete 52-week history for {symbol}")
     if not df["close"].map(lambda x: math.isfinite(x) and x > 0).all():
         raise ValidationError(f"Invalid closing price in history for {symbol}")
+    sessions = trading_sessions(end - timedelta(days=364), end)
+    actual = set(df.loc[df["date"] >= end - timedelta(days=364), "date"])
+    if not sessions or actual != sessions:
+        raise ValidationError(f"TWSE trading session coverage mismatch for {symbol}")
     if len(df) < 60:
         raise ValidationError(f"Insufficient history for {symbol}: only {len(df)} rows")
     return df
@@ -359,6 +379,18 @@ def calculate(symbol: str, history: pd.DataFrame, actions: dict[str, list[dict[s
     except Exception as e:
         twse_all_note = f"error: {e}"
 
+    # Reuse a verified same-date official snapshot only if price and volume match.
+    if not twse_all_ok:
+        try:
+            saved = json.loads((PUBLIC / "close.json").read_text(encoding="utf-8"))["etfs"][symbol]
+            if (saved["as_of"] == as_of.isoformat()
+                and saved["validation"]["twse_openapi_same_day_match"] is True
+                and abs(saved["official_close"] - close) <= 0.001
+                and saved["volume_shares"] == volume):
+                twse_all_ok = True
+                twse_all_note = "matched previously verified same-date official snapshot"
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
     yahoo_close, yahoo_ok, yahoo_note = compare_yahoo_close(symbol, as_of, close)
     second_ok = yahoo_ok if require_second_source else True
 
@@ -491,13 +523,16 @@ def run_intraday(now: datetime) -> dict[str, Any]:
             continue
         try:
             official = fetch_twse_intraday_quote(symbol)
-            if abs((datetime.now(TZ) - official["timestamp"]).total_seconds()) > 180:
+            if abs((now - official["timestamp"]).total_seconds()) > 180:
                 raise ValidationError("TWSE MIS quote stale")
             if official["date"] != now.date():
                 raise ValidationError("TWSE MIS quote is not from today")
+            if official.get("previous_close") is None or abs(official["previous_close"] - base["official_close"]) > 0.011:
+                raise ValidationError("MIS previous close differs from verified history")
             yahoo_price, yahoo_ok, yahoo_note, yahoo_time = compare_yahoo_intraday(symbol, official)
             validation = {
                 "twse_mis_current_date": True,
+                "historical_validation": base.get("validation", {}),
                 "second_source": "Yahoo Finance intraday",
                 "second_source_match": yahoo_ok,
                 "second_source_note": yahoo_note,
@@ -577,6 +612,8 @@ def payload_ready(mode: str, payload: dict[str, Any], expected_date: date) -> bo
         item = etfs[symbol]
         validation = item.get("validation", {})
         if item.get("status") != "盤中" or item.get("quote_date") != expected_date.isoformat():
+            return False
+        if any(validation.get("historical_validation", {}).get(k) is not True for k in ("twse_monthly_history", "twse_openapi_same_day_match", "corporate_action_configured", "second_source_match", "publishable")):
             return False
         if item.get("historical_cutoff") != payload.get("historical_cutoff"):
             return False
