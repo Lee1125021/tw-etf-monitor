@@ -46,7 +46,7 @@ class MonitorTests(unittest.TestCase):
         self.assertEqual(quote["date"], date(2026, 8, 20))
         self.assertEqual(quote["timestamp"].isoformat(), "2026-08-20T11:00:00+08:00")
 
-    def test_yahoo_previous_close_can_validate_missing_daily_row(self):
+    def test_yahoo_previous_close_rejects_unproven_date(self):
         snapshot = {
             "price": 104.2,
             "timestamp": int(datetime(2026, 8, 21, 11, 0, tzinfo=monitor.TZ).timestamp()),
@@ -58,15 +58,15 @@ class MonitorTests(unittest.TestCase):
             patch.object(monitor, "fetch_yahoo_snapshot", return_value=snapshot),
         ):
             value, matched, note = monitor.compare_yahoo_close("0050", date(2026, 8, 20), 103.8)
-        self.assertEqual(value, 103.8)
-        self.assertTrue(matched)
-        self.assertEqual(note, "matched via Yahoo previous close")
+        self.assertIsNone(value)
+        self.assertFalse(matched)
+        self.assertIn("date mismatch", note)
 
     def test_close_payload_requires_current_date_and_second_source(self):
         item = {
             "status": "verified",
             "as_of": "2026-08-20",
-            "validation": {"second_source_match": True, "publishable": True},
+            "validation": {"second_source_match": True, "publishable": True, "twse_monthly_history": True, "twse_openapi_same_day_match": True, "corporate_action_configured": True, "historical_validation": {"second_source_match": True, "publishable": True, "twse_monthly_history": True, "twse_openapi_same_day_match": True, "corporate_action_configured": True}},
         }
         payload = {
             "mode": "close",
@@ -82,10 +82,12 @@ class MonitorTests(unittest.TestCase):
         item = {
             "status": "盤中",
             "quote_date": "2026-08-20",
-            "validation": {"second_source_match": True, "publishable": True},
+            "historical_cutoff": "2026-08-19",
+            "validation": {"second_source_match": True, "publishable": True, "twse_monthly_history": True, "twse_openapi_same_day_match": True, "corporate_action_configured": True, "historical_validation": {"second_source_match": True, "publishable": True, "twse_monthly_history": True, "twse_openapi_same_day_match": True, "corporate_action_configured": True}},
         }
         payload = {
             "mode": "intraday",
+            "historical_cutoff": "2026-08-19",
             "etfs": {"0050": item, "0052": {**item, "validation": dict(item["validation"])}},
         }
         self.assertTrue(payload_ready("intraday", payload, date(2026, 8, 20)))
@@ -97,13 +99,15 @@ class MonitorTests(unittest.TestCase):
         base = {
             "status": "verified",
             "as_of": "2026-08-19",
+            "official_close": 103.1,
+            "validation": {"second_source_match": True, "publishable": True, "twse_monthly_history": True, "twse_openapi_same_day_match": True, "corporate_action_configured": True},
             "ma60": 99.0,
             "high52_close": 110.0,
             "thresholds": {"minus_10": 99.0, "minus_15": 93.5, "minus_20": 88.0},
         }
         close_payload = {
             "official_data_date": "2026-08-19",
-            "etfs": {"0050": base, "0052": dict(base)},
+            "etfs": {"0050": base, "0052": {**base, "official_close": 60.0}},
         }
 
         def official_quote(symbol):
@@ -133,6 +137,8 @@ class MonitorTests(unittest.TestCase):
         base = {
             "status": "verified",
             "as_of": "2026-08-19",
+            "official_close": 103.1,
+            "validation": {"second_source_match": True, "publishable": True, "twse_monthly_history": True, "twse_openapi_same_day_match": True, "corporate_action_configured": True},
             "ma60": 99.0,
             "high52_close": 110.0,
             "thresholds": {},
