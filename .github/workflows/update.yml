@@ -87,7 +87,7 @@ jobs:
             echo "mode=$INPUT_MODE" >> "$GITHUB_OUTPUT"
           elif [ "$EVENT_SCHEDULE" = '41 2 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '49 2 * * 1-5' ]; then
             echo 'mode=intraday' >> "$GITHUB_OUTPUT"
-          elif [ "$EVENT_SCHEDULE" = '31 7 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '231 7 * * 1-5' ]; then
+          elif [ "$EVENT_SCHEDULE" = '31 7 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '11 8 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '11 10 * * 1-5' ]; then
             echo 'mode=close' >> "$GITHUB_OUTPUT"
           else
             HOUR_TW=$(TZ=Asia/Taipei date +%H)
