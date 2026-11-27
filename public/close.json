@@ -1,42 +1,110 @@
 {
-  "generated_at": "2026-11-27T20:49:15.133835+08:00",
+  "generated_at": "2026-11-27T21:03:35.976372+08:00",
   "mode": "close",
   "source_priority": [
     "TWSE STOCK_DAY",
-    "TWSE STOCK_DAY_ALL",
+    "TWSE STOCK_DAY_ALL or dated MI_INDEX",
     "Yahoo Finance daily cross-check"
   ],
   "etfs": {
     "0050": {
       "symbol": "0050",
       "as_of": "2026-11-27",
-      "status": "尚無法驗證",
+      "status": "verified",
+      "official_close": 92.4,
+      "volume_shares": 111385656,
+      "ma60": 105.1933,
+      "ma60_period": {
+        "start": "2026-08-31",
+        "end": "2026-11-27",
+        "sessions": 60
+      },
+      "high52_close": 116.5,
+      "high52_date": "2026-10-06",
+      "high52_window": {
+        "start": "2025-11-28",
+        "end": "2026-11-27"
+      },
+      "drawdown_pct": 20.6867,
+      "thresholds": {
+        "minus_10": 104.85,
+        "minus_15": 99.025,
+        "minus_20": 93.2
+      },
+      "daily_return_pct": -0.4847,
+      "triggers": {
+        "close_below_ma60": true,
+        "below_ma60_and_drawdown_ge_10": true,
+        "drawdown_ge_15": true,
+        "drawdown_ge_20": true,
+        "daily_return_le_minus_3": false
+      },
       "validation": {
         "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=92.85, volume=242920377",
+        "twse_openapi_same_day_match": true,
+        "twse_openapi_note": "STOCK_DAY_ALL date='1151126' expected=2026-11-27 close=92.85 expected_close=92.4 volume=242920377.0 expected_volume=111385656; MI_INDEX date=20261127 close=92.4 expected_close=92.4 volume=111385656.0 expected_volume=111385656",
+        "official_crosscheck_source": "MI_INDEX",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
         "history_rows": 301,
-        "publishable": false
+        "publishable": true
+      },
+      "formulas": {
+        "ma60": "sum(last 60 completed adjusted closes) / 60",
+        "high52": "max(adjusted close in [as_of-364d, as_of])",
+        "drawdown_pct": "(1 - close / high52) * 100"
       }
     },
     "0052": {
       "symbol": "0052",
       "as_of": "2026-11-27",
-      "status": "尚無法驗證",
+      "status": "verified",
+      "official_close": 53.45,
+      "volume_shares": 28234995,
+      "ma60": 60.9858,
+      "ma60_period": {
+        "start": "2026-08-31",
+        "end": "2026-11-27",
+        "sessions": 60
+      },
+      "high52_close": 67.95,
+      "high52_date": "2026-10-06",
+      "high52_window": {
+        "start": "2025-11-28",
+        "end": "2026-11-27"
+      },
+      "drawdown_pct": 21.3392,
+      "thresholds": {
+        "minus_10": 61.155,
+        "minus_15": 57.7575,
+        "minus_20": 54.36
+      },
+      "daily_return_pct": 0.0,
+      "triggers": {
+        "close_below_ma60": true,
+        "below_ma60_and_drawdown_ge_10": true,
+        "drawdown_ge_15": true,
+        "drawdown_ge_20": true,
+        "daily_return_le_minus_3": false
+      },
       "validation": {
         "twse_monthly_history": true,
-        "twse_openapi_same_day_match": false,
-        "twse_openapi_note": "close=53.45, volume=30312490",
+        "twse_openapi_same_day_match": true,
+        "twse_openapi_note": "STOCK_DAY_ALL date='1151126' expected=2026-11-27 close=53.45 expected_close=53.45 volume=30312490.0 expected_volume=28234995; MI_INDEX date=20261127 close=53.45 expected_close=53.45 volume=28234995.0 expected_volume=28234995",
+        "official_crosscheck_source": "MI_INDEX",
         "second_source": "Yahoo Finance daily",
         "second_source_match": true,
         "second_source_note": "matched via Yahoo daily",
         "corporate_action_configured": true,
         "history_rows": 296,
-        "publishable": false
+        "publishable": true
+      },
+      "formulas": {
+        "ma60": "sum(last 60 completed adjusted closes) / 60",
+        "high52": "max(adjusted close in [as_of-364d, as_of])",
+        "drawdown_pct": "(1 - close / high52) * 100"
       }
     }
   },
