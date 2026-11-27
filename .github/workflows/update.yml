@@ -22,12 +22,12 @@ on:
           - close
   schedule:
     # Run early enough to absorb observed GitHub schedule delays.
-    # Taiwan time (UTC+8): 08:31, 08:47, 14:07, 14:27, Monday-Friday.
-    # Early runs wait until just before the reports before requesting data.
-    - cron: '31 0 * * 1-5'
-    - cron: '47 0 * * 1-5'
-    - cron: '7 6 * * 1-5'
-    - cron: '27 6 * * 1-5'
+    # Taiwan time: 10:41, 10:49, 15:31, 16:11, 18:11, weekdays.
+    - cron: '41 2 * * 1-5'
+    - cron: '49 2 * * 1-5'
+    - cron: '31 7 * * 1-5'
+    - cron: '11 8 * * 1-5'
+    - cron: '11 10 * * 1-5'
   push:
     branches: [main]
     paths:
@@ -47,16 +47,17 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
       - name: Checkout pull request
         if: github.event_name == 'pull_request'
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Checkout main
         if: github.event_name != 'pull_request'
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           # Scheduled runs can be queued with an older event SHA. Always start from the
           # latest main branch so a preceding data run cannot cause a non-fast-forward push.
@@ -64,7 +65,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
@@ -84,9 +85,9 @@ jobs:
           EVENT_SCHEDULE='${{ github.event.schedule }}'
           if [ -n "$INPUT_MODE" ] && [ "$INPUT_MODE" != "auto" ]; then
             echo "mode=$INPUT_MODE" >> "$GITHUB_OUTPUT"
-          elif [ "$EVENT_SCHEDULE" = '31 0 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '47 0 * * 1-5' ]; then
+          elif [ "$EVENT_SCHEDULE" = '41 2 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '49 2 * * 1-5' ]; then
             echo 'mode=intraday' >> "$GITHUB_OUTPUT"
-          elif [ "$EVENT_SCHEDULE" = '7 6 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '27 6 * * 1-5' ]; then
+          elif [ "$EVENT_SCHEDULE" = '31 7 * * 1-5' ] || [ "$EVENT_SCHEDULE" = '231 7 * * 1-5' ]; then
             echo 'mode=close' >> "$GITHUB_OUTPUT"
           else
             HOUR_TW=$(TZ=Asia/Taipei date +%H)
@@ -98,17 +99,19 @@ jobs:
           fi
 
       - name: Update verified data
+        id: update_data
+        continue-on-error: true
         if: github.event_name != 'pull_request'
         shell: bash
         run: |
           if [ '${{ steps.mode.outputs.mode }}' = 'intraday' ]; then
-            python src/monitor.py --mode intraday --not-before 10:50 --attempts 4 --retry-seconds 90
+            python src/monitor.py --mode intraday --not-before 10:45 --attempts 3 --retry-seconds 45
           else
-            python src/monitor.py --mode close --not-before 15:45 --attempts 5 --retry-seconds 180
+            python src/monitor.py --mode close --not-before 15:35 --attempts 4 --retry-seconds 90
           fi
 
       - name: Commit generated data
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.update_data.outcome != 'skipped'
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
@@ -121,3 +124,7 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+
+      - name: Flag failed validation
+        if: steps.update_data.outcome == 'failure'
+        run: exit 1
