@@ -51,13 +51,13 @@ jobs:
     steps:
       - name: Checkout pull request
         if: github.event_name == 'pull_request'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Checkout main
         if: github.event_name != 'pull_request'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # Scheduled runs can be queued with an older event SHA. Always start from the
           # latest main branch so a preceding data run cannot cause a non-fast-forward push.
@@ -65,7 +65,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: pip
