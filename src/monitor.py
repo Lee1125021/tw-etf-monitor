@@ -23,6 +23,7 @@ CONFIG = ROOT / "config" / "corporate_actions.json"
 SYMBOLS = ("0050", "0052")
 TWSE_MONTH = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY"
 TWSE_CALENDAR = "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK"
+TWSE_DATED = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX"
 TWSE_ALL = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_MIS = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
 YAHOO_CHARTS = (
@@ -74,7 +75,13 @@ def get_json(url: str, params: dict[str, Any] | None = None, retries: int = 3) -
 
 def parse_twse_date(s: str) -> date:
     # TWSE STOCK_DAY typically returns ROC dates such as 115/08/13.
-    y, m, d = [int(x) for x in s.strip().split("/")]
+    raw = str(s).strip().replace("-", "/")
+    if "/" in raw:
+        y, m, d = [int(x) for x in raw.split("/")]
+    elif raw.isdigit() and len(raw) in (7, 8):
+        y, m, d = int(raw[:-4]), int(raw[-4:-2]), int(raw[-2:])
+    else:
+        raise ValueError(f"Invalid TWSE date: {s!r}")
     if y < 1911:
         y += 1911
     return date(y, m, d)
@@ -196,6 +203,52 @@ def fetch_twse_all_today(symbol: str) -> dict[str, Any] | None:
         if str(r.get("Code", "")) == symbol:
             return r
     return None
+
+
+def parse_dated_close(payload, symbol, as_of):
+    if payload.get("stat") != "OK" or parse_twse_date(payload.get("date", "")) != as_of:
+        raise ValidationError("MI_INDEX response date/status mismatch")
+    required = ("證券代號", "成交股數", "收盤價")
+    hits = []
+    for table in payload.get("tables", []):
+        fields = table.get("fields", [])
+        if all(k in fields for k in required):
+            for row in table.get("data", []):
+                if str(row[fields.index("證券代號")]).strip() == symbol:
+                    hits.append((num(row[fields.index("收盤價")]), num(row[fields.index("成交股數")])))
+    if len(hits) != 1:
+        raise ValidationError(f"MI_INDEX expected one row for {symbol}, got {len(hits)}")
+    return hits[0]
+
+
+def official_close_check(symbol, as_of, close, volume):
+    notes = []
+    try:
+        row = fetch_twse_all_today(symbol)
+        if row:
+            raw = row.get("Date", row.get("date", ""))
+            oc, ov = num(row.get("ClosingPrice")), num(row.get("TradeVolume"))
+            try:
+                day = parse_twse_date(raw)
+            except ValueError:
+                day = None
+            notes.append(f"STOCK_DAY_ALL date={raw!r} expected={as_of} close={oc} expected_close={close} volume={ov} expected_volume={volume}")
+            if day == as_of:
+                ok = math.isfinite(oc) and math.isfinite(ov) and abs(oc-close) <= 0.001 and ov == volume
+                return ok, "; ".join(notes), "STOCK_DAY_ALL"
+        else:
+            notes.append("STOCK_DAY_ALL missing symbol")
+    except Exception as e:
+        notes.append(f"STOCK_DAY_ALL error: {e}")
+    try:
+        payload = get_json(TWSE_DATED, {"date": as_of.strftime("%Y%m%d"), "type": "ALLBUT0999", "response": "json"})
+        oc, ov = parse_dated_close(payload, symbol, as_of)
+        notes.append(f"MI_INDEX date={payload.get('date')} close={oc} expected_close={close} volume={ov} expected_volume={volume}")
+        ok = math.isfinite(oc) and math.isfinite(ov) and abs(oc-close) <= 0.001 and ov == volume
+        return ok, "; ".join(notes), "MI_INDEX"
+    except Exception as e:
+        notes.append(f"MI_INDEX error: {e}")
+        return False, "; ".join(notes), None
 
 
 def fetch_yahoo_chart(symbol: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -362,35 +415,7 @@ def calculate(symbol: str, history: pd.DataFrame, actions: dict[str, list[dict[s
         prev = float(df.iloc[-2]["close"])
         daily_return = (close / prev - 1) * 100.0
 
-    # Cross-check current official row against TWSE OpenAPI STOCK_DAY_ALL when available.
-    twse_all_ok = False
-    twse_all_note = "unavailable"
-    try:
-        row = fetch_twse_all_today(symbol)
-        if row:
-            oc = num(row.get("ClosingPrice"))
-            ov = num(row.get("TradeVolume"))
-            close_ok = not math.isnan(oc) and abs(oc - close) <= 0.001
-            volume_ok = math.isnan(ov) or int(ov) == volume
-            raw_date = str(row.get("Date", row.get("date", ""))).replace("/", "").replace("-", "")
-            date_ok = raw_date in {as_of.strftime("%Y%m%d"), f"{as_of.year-1911:03d}{as_of:%m%d}"}
-            twse_all_ok = date_ok and close_ok and volume_ok
-            twse_all_note = f"close={oc}, volume={None if math.isnan(ov) else int(ov)}"
-    except Exception as e:
-        twse_all_note = f"error: {e}"
-
-    # Reuse a verified same-date official snapshot only if price and volume match.
-    if not twse_all_ok:
-        try:
-            saved = json.loads((PUBLIC / "close.json").read_text(encoding="utf-8"))["etfs"][symbol]
-            if (saved["as_of"] == as_of.isoformat()
-                and saved["validation"]["twse_openapi_same_day_match"] is True
-                and abs(saved["official_close"] - close) <= 0.001
-                and saved["volume_shares"] == volume):
-                twse_all_ok = True
-                twse_all_note = "matched previously verified same-date official snapshot"
-        except (OSError, ValueError, KeyError, TypeError):
-            pass
+    twse_all_ok, twse_all_note, official_source = official_close_check(symbol, as_of, close, volume)
     yahoo_close, yahoo_ok, yahoo_note = compare_yahoo_close(symbol, as_of, close)
     second_ok = yahoo_ok if require_second_source else True
 
@@ -401,6 +426,7 @@ def calculate(symbol: str, history: pd.DataFrame, actions: dict[str, list[dict[s
         "twse_monthly_history": True,
         "twse_openapi_same_day_match": twse_all_ok,
         "twse_openapi_note": twse_all_note,
+        "official_crosscheck_source": official_source,
         "second_source": "Yahoo Finance daily",
         "second_source_match": yahoo_ok,
         "second_source_note": yahoo_note,
@@ -487,7 +513,7 @@ def run_close(now: datetime) -> dict[str, Any]:
     output: dict[str, Any] = {
         "generated_at": now.isoformat(),
         "mode": "close",
-        "source_priority": ["TWSE STOCK_DAY", "TWSE STOCK_DAY_ALL", "Yahoo Finance daily cross-check"],
+        "source_priority": ["TWSE STOCK_DAY", "TWSE STOCK_DAY_ALL or dated MI_INDEX", "Yahoo Finance daily cross-check"],
         "etfs": {},
     }
     dates = []
